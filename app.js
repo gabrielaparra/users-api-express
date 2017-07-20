@@ -8,6 +8,7 @@ const layouts      = require('express-ejs-layouts');
 const mongoose     = require('mongoose');
 const session      = require('express-session');
 const passport     = require('passport');
+const cors         = require('cors');
 
 require('dotenv').config();
 require('./config/passport-config.js');
@@ -39,6 +40,12 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cors({
+  credentials: true,
+  //allow other domains to send cookies
+  origin: ['http://localhost:4200']
+  //the domains that are allowed
+}));
 
 //----------------------ROUTES---------------------------
 

@@ -43,8 +43,10 @@ router.get('/camels', (req, res, next) => {
 
   CamelModel
     .find()
+    //find all the camels -- we could also do a projection here and find
+    //camels by an specific category 
     .populate('owner', {fullName: 1})
-    //retrieve info of the owner, just the name 
+    //retrieve info of the owner, just the name
     .exec((err, camels) => {
     if (err) {
       res.status(500).json({message: 'Couldn\'t retrieve the camels.'});
