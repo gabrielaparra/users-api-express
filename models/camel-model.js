@@ -13,7 +13,7 @@ const myCamelSchema = new Schema(
       type: Number,
       required: true,
       default: 2,
-      min: 1,
+      min: 0,
       max: 3
     }
   },
