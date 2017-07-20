@@ -11,6 +11,11 @@ router.post('/new-camel', (req, res, next) => {
   });
 
   theCamel.save((err) => {
+    if (!req.user) {
+      res.status(401).json({message: 'Log in to make camels'});
+      return;
+    }
+
     if (err && theCamel.errors === undefined) {
       res.status(500).json({message: 'Camel save failed'});
       return;
@@ -19,7 +24,8 @@ router.post('/new-camel', (req, res, next) => {
       res.status(400).json({
         nameError: theCamel.errors.name,
         colorError: theCamel.errors.color,
-        humpError: theCamel.errors.humps
+        humpError: theCamel.errors.humps,
+        owner: req.user._id
       });
       return;
     }
