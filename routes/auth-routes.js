@@ -80,8 +80,22 @@ router.post('/api/login', (req, res, next) => {
   authenticateFunction(req, res, next);
 });
 
-// POST logout
+//-----------------------POST LOGOUT--------------------------
+router.post('/api/logout', (req, res, next) => {
+  req.logout();
+  res.status(200).json({message: 'Logout success!'});
+});
 
-// GET checklogin
+//--------------------GET CHECKLOGIN--------------------------
+router.get('/api/checklogin', (req, res, next) => {
+  if (!req.user) {
+    res.status(401).json({message: 'No user is logged in'});
+    return;
+  }
+  req.user.encryptedPassword = undefined;
+  res.status(200).json(req.user);
+});
+
+//------------------------------------------------------------
 
 module.exports = router;
