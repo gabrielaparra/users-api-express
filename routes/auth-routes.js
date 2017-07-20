@@ -5,7 +5,7 @@ const UserModel = require('../models/user-model.js');
 const bcrypt = require('bcrypt');
 
 //------------------------POST SIGNUP---------------------------
-router.post('/api/signup', (req, res, next) => {
+router.post('/signup', (req, res, next) => {
   if(!req.body.signupEmail || !req.body.signupPassword) {
     res.status(400).json({message: 'Please ensure both email and password are provided'});
     //status 400 is for when the user makes a mistake
@@ -52,7 +52,7 @@ router.post('/api/signup', (req, res, next) => {
 //------------------------POST LOGIN------------------------
 // This is different because passport.authenticate() redirects
 // APIs normally shouldn't redirect
-router.post('/api/login', (req, res, next) => {
+router.post('/login', (req, res, next) => {
   const authenticateFunction =
     passport.authenticate('local', (err, theUser, extraInfo) => {
       // Errors prevented us from deciding if login was succesful or not
@@ -81,13 +81,18 @@ router.post('/api/login', (req, res, next) => {
 });
 
 //-----------------------POST LOGOUT--------------------------
-router.post('/api/logout', (req, res, next) => {
+router.post('/logout', (req, res, next) => {
+  if (!req.user) {
+    res.status(401).json({message: 'No user is logged in'});
+    return;
+  }
+
   req.logout();
   res.status(200).json({message: 'Logout success!'});
 });
 
 //--------------------GET CHECKLOGIN--------------------------
-router.get('/api/checklogin', (req, res, next) => {
+router.get('/checklogin', (req, res, next) => {
   if (!req.user) {
     res.status(401).json({message: 'No user is logged in'});
     return;
