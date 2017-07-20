@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 const UserModel = require('../models/user-model.js');
 const bcrypt = require('bcrypt');
 
-// POST signup
+//------------------------POST SIGNUP---------------------------
 router.post('/api/signup', (req, res, next) => {
   if(!req.body.signupEmail || !req.body.signupPassword) {
     res.status(400).json({message: 'Please ensure both email and password are provided'});
@@ -48,7 +49,36 @@ router.post('/api/signup', (req, res, next) => {
   );
 });
 
-// POST login
+//------------------------POST LOGIN------------------------
+// This is different because passport.authenticate() redirects
+// APIs normally shouldn't redirect
+router.post('/api/login', (req, res, next) => {
+  const authenticateFunction =
+    passport.authenticate('local', (err, theUser, extraInfo) => {
+      // Errors prevented us from deciding if login was succesful or not
+      if (err) {
+        res.status(500).json({message: 'Unknown Login Error'});
+      }
+      // Login failed (for sure)
+      if (!theUser) {
+        res.status(400).json(extraInfo);
+      }
+
+      //Login succesful
+      req.login(theUser, (err) => {
+        if (err) {
+          res.status(500).json({message: 'Error during saving session'});
+          return;
+        }
+        theUser.encryptedPassword = undefined;
+
+        //Send the information to the front end
+        res.status(200).json(theUser);
+      });
+  });
+
+  authenticateFunction(req, res, next);
+});
 
 // POST logout
 
